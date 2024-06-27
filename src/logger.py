@@ -1,3 +1,7 @@
+import sys,os
+from os.path import dirname,join,abspath
+sys.path.insert(0,abspath(join(dirname(__file__),'..')))
+
 import logging
 import os
 from datetime import datetime
@@ -16,7 +20,5 @@ logging.basicConfig(
 
     )
 
-logging.info("Something is better than nothing")
-if __name__=="main__":
-    logging.info("logging has started")
+
 
