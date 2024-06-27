@@ -7,7 +7,7 @@ sys.path.insert(0, abspath(join(dirname(__file__), '../..')))
 import os, sys
 from src.logger import logging
 from src.exception import CustomException
-from src.utils import save_obj
+from src.utils import save_obj, load_obj
 from dataclasses import dataclass
 
 import pandas as pd
@@ -35,7 +35,6 @@ class DataTransformation:
         self.transformation_config = DataTransformationConfig()
 
     def getPreprocessorObject(self):
-
         # separate columns based on data types
         categorical_cols = ['season', 'weathersit', 'month', 'day_of_week', 'hour']
         numerical_cols = ['temp', 'atemp', 'hum', 'windspeed']
@@ -96,12 +95,12 @@ class DataTransformation:
             X_test, y_test = test_df.drop(['instant', 'cnt'], axis=1), test_df['cnt']
             logging.info('Splitting of Dependent and Independent features is successful')
 
-            # get preprocessor and pre-process the content
-            preprocessor = self.getPreprocessorObject()
-            X_train_arr = preprocessor.fit_transform(X_train)
+            #get preprocess and pre-processor the content
+            preprocessor=self.getPreprocessorObject()
+            X_train_arr=preprocessor.fit_transform(X_train)
             logging.info('X_train successfully pre-processed')
 
-            X_test_arr = preprocessor.transform(X_test)
+            X_test_arr=preprocessor.transform(X_test)
             logging.info('X_test successfully pre-processed')
 
             # combine X_train_arr with y_train and vice versa
@@ -109,8 +108,7 @@ class DataTransformation:
             clean_test_arr = np.c_[X_test_arr, np.array(y_test)]
             logging.info('Concatenation of cleaned arrays is successful')
 
-            # save the pre-processor
-            save_obj(self.transformation_config.preprocessor_file_path, preprocessor)
+            save_obj(self.transformation_config.preprocessor_file_path,preprocessor)
             logging.info('Pre-processor successfully saved')
 
             return (
@@ -118,6 +116,9 @@ class DataTransformation:
             )
 
         except Exception as e:
-            raise CustomException(f'Exception occurred in Data Transformation: {e}')
+            raise CustomException(e,sys)
+if __name__=="__main__":    
+    data_transformation=DataTransformation()
+    data_transformation.initiateDataTransformation(train_path='artifacts\\train.csv',test_path='artifacts\\test.csv')
 
 
